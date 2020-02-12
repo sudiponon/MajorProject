@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Block Explorer</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+		<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">	 -->
+	<link rel="stylesheet" type="text/css" href="css\bootstrap.min.css">
+</head>
+
+<body ng-app="BlockExplorer">
+
+	<div id="contact">
+		<button id="btn2">X</button>
+		<h2 id="contH">Contacts</h2>
+
+		<ul>
+			<li><a href="">Sudip Ghimire</a></li>
+			<li><a href="">Saransh Bogati</a></li>
+			<li><a href="">Sameer Khanal</a></li>
+			<li><a href="">Rabindra Dhami</a></li>
+		</ul>
+	</div>
+
+	<div id="about">
+		<button id="btn">X</button>
+		<h1 id="abtH">About <span style="color: blue">Med</span><span style="color:yellow;"> Chain</span></h1>
+		<p id="aboutP">
+			In the growing age of technology, privacy and security has been recently considered a major issue.
+			In the field of health services, Hospitals and medical agencies take control over the data and records of
+			the population.
+			And this becomes a major issue for patients.
+			And nowadays the concept of centralization of data has flooded the world which gives problem like data
+			hacks,
+			data breach, etc.
+			In our project we show the decentralized way of storing data of patients through the use of blockchain
+			technology.
+			A blockchain, originally block chain, is a growing list of records, called blocks, which are linked using
+			cryptography.
+			Each block contains a cryptographic hash of the previous block, a timestamp, and transaction data.
+		</p>
+	</div>
+	<nav class="navbar navbar-expand-sm bg-dark">
+		<a href="/" class="navbar-brand " style="font-size:2em;font-weight:bolder;color: rgb(34, 184, 146)">
+			MEDCHAIN</a>
+
+
+		<ul class="navbar-nav ml-auto ">
+			<li class="nav-item ">
+				<a class="nav-link font-weight-bold" href="# " id="abtLink">About</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link font-weight-bold" href="#" id="contLink">Contact</a>
+			</li>
+		</ul>
+
+	</nav>
+
+
+
+	<div class="container bg-dark my-4" ng-controller="MainController" style="background:linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.7)),url('./bg.jpg');
+	background-repeat: no-repeat;background-size:cover;;border-radius: 8px;box-shadow:0 0 10px ">
+		<div class="row">
+			<div class="col-md-8 offset-md-2">
+				<h1 id="page-title" class="text-success">Block Explorer</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<form ng-submit="search(searchValue)">
+					<div class="form-group">
+						<input type="text" class="form-control bg-secondary text-white" ng-model="searchValue" id="ips"
+							placeholder="hghj">
+					</div>
+					<div class="form-group">
+						<select class="form-control bg-secondary text-white" ng-model="searchType" id="secondField"
+							onchange="check();">
+							<option value="block">Block Hash</option>
+							<option value="transaction">Transaction ID</option>
+							<option value="address">Address</option>
+						</select>
+					</div>
+					<button type="submit" class="btn btn-outline-danger margin-auto btn-search  text-white "
+						style="width: 50%;font-size:1.2rem">
+						Search
+					</button>
+					<p ng-if="!block && !transaction && !addressData && initialSearchMade"
+						class="no-data-text alert alert-danger text-dark">
+						No data found for search.
+					</p>
+				</form>
+				<div class="spinner-border"></div>
+				<div class="alert alert-info alert-dismissible fade show">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					Enter the transaction.
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+
+				<!-- 'display block' table -->
+				<h3 class="table-title text-white" ng-if="block">Block</h3>
+				<table class="table table-striped" ng-if="block">
+					<tbody>
+						<tr>
+							<td class="bold">Block Hash</td>
+							<td>{{ block.hash }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Index</td>
+							<td>{{ block.index }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Time Stamp</td>
+							<td>{{ block.timestamp }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Nonce</td>
+							<td>{{ block.nonce }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Previous Hash</td>
+							<td>{{ block.previousBlockHash }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Number Transactions</td>
+							<td>{{ block.transactions.length }}</td>
+						</tr>
+
+					</tbody>
+				</table>
+				<!-- end 'display block' table -->
+
+				<!-- 'display transaction' table -->
+				<h3 class="table-title text-white" ng-if="transaction">Transaction</h3>
+				<table class="table table-striped" ng-if="transaction">
+					<tbody>
+						<tr>
+							<td class="bold">doctor</td>
+							<td>{{ transaction.doctor }}</td>
+						</tr>
+						<tr>
+							<td class="bold">patient</td>
+							<td>{{ transaction.patient }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Blood Group</td>
+							<td>{{ transaction.bloodgroup }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Height</td>
+							<td>{{ transaction.height }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Weight</td>
+							<td>{{ transaction.weight }}</td>
+						</tr>
+						<tr>
+							<td class="bold">Remarks</td>
+							<td>{{ transaction.remarks }}</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- end 'display transaction' table -->
+
+				<!-- 'display address' table -->
+				<h3 class="table-title text-white" ng-if="addressData">Address</h3>
+				<p id="balance-text" ng-if="addressData" class="text-white">(Balance: {{ addressData.addressBalance }})
+				</p>
+				<table class="table table-striped" ng-if="addressData">
+					<thead>
+						<tr>
+							<th scope="col">doctor</th>
+							<th scope="col">patient</th>
+							<th scope="col">Amount</th>
+							<th scope="col">Blood Group</th>
+							<th scope="col">Height</th>
+							<th scope="col">Weight</th>
+							<th scope="col">Remarks</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="transaction in addressData.addressTransactions">
+							<td>{{ transaction.doctor }}</td>
+							<td>{{ transaction.patient }}</td>
+							<td>{{ transaction.amount }}</td>
+							<td>{{ transaction.bloodgroup }}</td>
+							<td>{{ transaction.height }}</td>
+							<td>{{ transaction.weight }}</td>
+							<td>{{ transaction.remarks }}</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- end 'display address' table -->
+
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const abtLink = document.getElementById('abtLink');
+		const btn = document.getElementById('btn');
+		const about = document.getElementById('about');
+		abtLink.addEventListener('click',showAbout);
+		btn.addEventListener('click',hideAbout);
+
+		const contLink = document.getElementById('contLink');
+		const btn2 = document.getElementById('btn2');
+		const contact = document.getElementById('contact');
+		contLink.addEventListener('click',showContact);
+		btn2.addEventListener('click',hideContact);
+
+		function showAbout(){
+			about.style.display = 'block';
+		}
+		function hideAbout(){
+			about.style.display = 'none';
+		}
+
+		function showContact(){
+			contact.style.display = 'block';
+		}
+		function hideContact(){
+			contact.style.display = 'none';
+		}
+
+
+		window.app = angular.module('BlockExplorer', []);
+
+		app.controller('MainController', function ($scope, $http) {
+			$scope.block = null;
+			$scope.transaction = null;
+			$scope.addressData = null;
+			$scope.initialSearchMade = false;
+
+			$scope.fetchBlock = function (blockHash) {
+				$http.get(`/block/${blockHash}`)
+					.then(response => {
+						$scope.block = response.data.block;
+						$scope.transaction = null;
+						$scope.addressData = null;
+					});
+			};
+
+			$scope.fetchTransaction = function (transactionId) {
+				$http.get(`/transaction/${transactionId}`)
+					.then(response => {
+						$scope.transaction = response.data.transaction;
+						$scope.block = null;
+						$scope.addressData = null;
+					});
+			};
+
+			$scope.fetchAddressData = function (address) {
+				$http.get(`/address/${address}`)
+					.then(response => {
+						$scope.addressData = response.data.addressData;
+						if (!$scope.addressData.addressTransactions.length) $scope
+							.addressData = null;
+						$scope.block = null;
+						$scope.transaction = null;
+					});
+			};
+
+			$scope.search = function (searchValue) {
+				$scope.initialSearchMade = true;
+				if ($scope.searchType === 'block') {
+					$scope.fetchBlock(searchValue);
+				}
+				else if ($scope.searchType === 'transaction') {
+					$scope.fetchTransaction(searchValue);
+				}
+				else if ($scope.searchType === 'address') {
+					$scope.fetchAddressData(searchValue);
+				}
+			};
+
+		});
+	</script>
+
+	<style type="text/css">
+		html,
+		body {
+			min-height: 100vh;
+			background-color: #e8e8e8;
+		}
+		@keyframes opac{
+			0%{
+				opacity: 0;
+				}
+			50%{
+				opacity: 0.5;
+			}
+			100%{
+				opacity: 1;
+			}
+		}
+
+		#about {
+			position: absolute;
+			height: 95vh;
+			width: 95vw;
+			z-index: 1;
+			background-color: rgb(163, 235, 240);
+			border-radius: 10px;
+			text-align: center;
+			top: 3%;
+			left: 2%;
+			justify-content: center;
+			align-content: center;
+			align-items: center;
+			display: none;
+			animation: opac 0.5s ease;
+				}
+		#abtH{
+			margin-top: 3em;
+			border-bottom: 1px dashed white;
+			font-size: 3em;
+		}
+
+		#btn {
+			float: right;
+			padding: 0.25em;
+			margin-right: 1em;
+			margin-top: 1em;
+			border-radius: 50%;
+			border:none;
+			background-color: rgb(243, 70, 70);
+			color: white;
+			width: 30px;
+			font-weight: bolder;
+			cursor: pointer;
+		}
+		#btn:hover{
+			background-color: red;
+		}
+
+		#aboutP {
+			text-align: justify;
+			margin-top: 4%;
+			padding: 1em;
+			font-size: 1.5em;
+			animation:opac 0.3s forwards;
+
+		}
+
+		@keyframes slideIn{
+			0%{
+				right: -4em;
+
+			}
+
+			50%{
+				right: -2em;
+			}
+
+			100%{
+				right: 0em;
+			}
+
+					}
+
+		#contact{
+			position: absolute;
+			top: 0;
+			right: 0;
+			background-color: rgb(12, 5, 5);
+			color: white;
+			z-index: 2;
+			height: 100vh;
+			width:15em;
+			padding: 0.5em;
+			display: none;
+			animation: slideIn 0.2s;
+		}
+		#contact ul{
+			margin-top: 3em;
+		}
+		#contact a{
+			text-decoration: none;
+			font-size: 1.2em;
+		}
+		#contact ul li{
+			list-style-type: none;
+			margin-top: 3em;
+		}
+		#contH{
+			text-align: center;
+			border-bottom: 1px dashed white;
+			margin-top: 1em;
+		}
+		#btn2{
+			float: right;
+			padding: 0.25em;
+			top: 0;
+			right: 0;
+			border-radius: 50%;
+			border:none;
+			background-color: rgb(243, 70, 70);
+			color: white;
+			width: 30px;
+			font-weight: bolder;
+			cursor: pointer;
+		}
+
+		#btn2:hover{
+			background-color:red;
+		}
+
+		.container {
+			padding-top: 50px;
+			padding-bottom: 50px;
+		}
+
+		#page-title {
+			text-align: center;
+			margin-bottom: 40px;
+		}
+
+		.table-title {
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		.table {
+			background-color: #ffffff;
+			box-shadow: 2px 2px 15px -3px rgba(0, 0, 0, 0.75);
+		}
+
+		#balance-text {
+			text-align: center;
+			margin-top: -20px;
+			margin-bottom: 30px;
+		}
+
+		.margin-auto {
+			margin: auto;
+			display: block;
+		}
+
+		.btn-search {
+			margin-bottom: 50px;
+		}
+
+		.bold {
+			font-weight: 700;
+		}
+
+		.no-data-text {
+			color: red;
+			text-align: center;
+		}
+	</style>
+
+
+</body>
+
+</html>
